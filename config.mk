@@ -1,5 +1,5 @@
 APP_NAME?=chicken-farm
-MODULES?=main
+MODULES?=app
 
 KERNEL?=$(shell uname -s)
 

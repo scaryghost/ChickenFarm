@@ -1,11 +1,13 @@
-#include "allegro5/allegro5.h"
+#include "allegro5/display.h"
+#include "allegro5/drawing.h"
+#include "allegro5/events.h"
+#include "allegro5/system.h"
 #include "allegro5/allegro_image.h"
 
-#include <iostream>
+#include "app/animation.h"
+
 #include <chrono>
 
-using std::cout;
-using std::endl;
 using std::chrono::duration;
 using std::chrono::duration_cast;
 using std::chrono::high_resolution_clock;
@@ -22,10 +24,8 @@ int main(int argc, char** argv) {
 	al_register_event_source(queue, al_get_display_event_source(display));
 
     volatile bool running = true;
-    float x = 0, y = 0;
     auto previous = std::chrono::high_resolution_clock::now(), current = previous;
-
-    auto image = al_load_bitmap("res/chicken_walk.png");
+    Animation animation;
 
 	while (running) {
         ALLEGRO_EVENT event;
@@ -42,10 +42,16 @@ int main(int argc, char** argv) {
 
         current = high_resolution_clock::now();
         auto dt= duration<float>(current - previous);
+        previous = current;
 
-        al_draw_scaled_bitmap(image, 0, 96, 32, 32, x, y, 256, 256, 0);
+        animation.tick(dt.count());
+        animation.draw();
 
 		al_flip_display();
 	}
+
+    al_destroy_display(display);
+    al_destroy_event_queue(queue);
+
     return 0;
 }
