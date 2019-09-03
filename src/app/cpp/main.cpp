@@ -4,7 +4,7 @@
 #include "allegro5/system.h"
 #include "allegro5/allegro_image.h"
 
-#include "app/animation.h"
+#include "app/animation_playback.h"
 
 #include <chrono>
 
@@ -25,7 +25,15 @@ int main(int argc, char** argv) {
 
     volatile bool running = true;
     auto previous = std::chrono::high_resolution_clock::now(), current = previous;
-    Animation animation;
+    Animation& walk_right = AnimationPlayback::create(
+        "res/chicken_walk.png",
+        1.f,
+        {{0.f, 96.f}, {32.f, 96.f}, {64.f, 96.f}, {96.f, 96.f}}
+    ), walk_left = AnimationPlayback::create(
+        "res/chicken_walk.png",
+        2.f,
+        {{0.f, 32.f}, {32.f, 32.f}, {64.f, 32.f}, {96.f, 32.f}}
+    );
 
 	while (running) {
         ALLEGRO_EVENT event;
@@ -44,8 +52,8 @@ int main(int argc, char** argv) {
         auto dt= duration<float>(current - previous);
         previous = current;
 
-        animation.tick(dt.count());
-        animation.draw();
+        AnimationPlayback::tick(dt.count());
+        AnimationPlayback::draw();
 
 		al_flip_display();
 	}
