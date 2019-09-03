@@ -2,19 +2,21 @@
 
 #include "allegro5/bitmap.h"
 
-#include <array>
+#include <initializer_list>
+#include <string>
+#include <vector>
 #include <utility>
 
-class Animation {
-public:
-    Animation();
+struct Animation {
+    Animation(
+        const std::string& path, 
+        float elapsed, 
+        float duration, 
+        const std::initializer_list<std::pair<float, float>>& offsets
+    );
     ~Animation();
 
-    void tick(float delta);
-    void draw();
-
-private:
     ALLEGRO_BITMAP* bitmap;
-    std::array<std::pair<float, float>, 4> offsets;
+    std::vector<std::pair<float, float>> offsets;
     float elapsed, duration;
 };
