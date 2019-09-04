@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
     volatile bool running = true;
     auto previous = std::chrono::high_resolution_clock::now(), current = previous;
 
-    Actor left_chicken {0.f, 0.f}, right_chicken {1024.f, 0.f};
+    Actor left_chicken {{0.f, 0.f}, {32.f, 0.f}}, right_chicken {{1024.f, 0.f}, {-24.f, 0.f}};
     AnimationPlayback::create(
         &left_chicken,
         "res/chicken_walk.png",
@@ -58,6 +58,8 @@ int main(int argc, char** argv) {
         auto dt= duration<float>(current - previous);
         previous = current;
 
+        left_chicken.tick(dt.count());
+        right_chicken.tick(dt.count());
         AnimationPlayback::tick(dt.count());
         AnimationPlayback::draw();
 

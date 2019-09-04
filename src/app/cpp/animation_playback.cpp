@@ -17,7 +17,7 @@ void AnimationPlayback::tick(float delta) {
 void AnimationPlayback::draw() {
     for(auto& it: active) {
         int i = int(it.elapsed / it.duration * 4.f) % 4;
-        al_draw_scaled_bitmap(it.bitmap, it.offsets[i].first, it.offsets[i].second, 32, 32, it.actor->x, it.actor->y, 64, 64, 0);
+        al_draw_scaled_bitmap(it.bitmap, it.offsets[i].first, it.offsets[i].second, 32, 32, it.actor->position.x, it.actor->position.y, 64, 64, 0);
     }
 }
 

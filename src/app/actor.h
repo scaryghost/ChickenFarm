@@ -1,6 +1,11 @@
 #pragma once
 
+struct Vector {
+    float x, y;
+};
+
 struct Actor {
-    float x;
-    float y;
+    Vector position, velocity;
+
+    void tick(float dt);
 };
