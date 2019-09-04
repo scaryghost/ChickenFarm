@@ -1,3 +1,4 @@
+#include "app/actor.h"
 #include "app/animation_playback.h"
 
 #include "allegro5/bitmap_draw.h"
@@ -16,16 +17,18 @@ void AnimationPlayback::tick(float delta) {
 void AnimationPlayback::draw() {
     for(auto& it: active) {
         int i = int(it.elapsed / it.duration * 4.f) % 4;
-        al_draw_scaled_bitmap(it.bitmap, it.offsets[i].first, it.offsets[i].second, 32, 32, 0, 0, 256, 256, 0);
+        al_draw_scaled_bitmap(it.bitmap, it.offsets[i].first, it.offsets[i].second, 32, 32, it.actor->x, it.actor->y, 64, 64, 0);
     }
 }
 
 Animation& AnimationPlayback::create(
+    Actor* actor,
     const std::string& path, 
     float duration, 
     const std::initializer_list<std::pair<float, float>>& offsets
 ) {
     active.push_back({
+        actor,
         al_load_bitmap(path.c_str()),
         offsets,
         active.size(),

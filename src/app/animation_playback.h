@@ -12,6 +12,7 @@ public:
     static void draw();
     
     static Animation& create(
+        Actor* actor,
         const std::string& path, 
         float duration, 
         const std::initializer_list<std::pair<float, float>>& offsets

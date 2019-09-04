@@ -4,6 +4,7 @@
 #include "allegro5/system.h"
 #include "allegro5/allegro_image.h"
 
+#include "app/actor.h"
 #include "app/animation_playback.h"
 
 #include <chrono>
@@ -25,13 +26,18 @@ int main(int argc, char** argv) {
 
     volatile bool running = true;
     auto previous = std::chrono::high_resolution_clock::now(), current = previous;
-    Animation& walk_right = AnimationPlayback::create(
+
+    Actor left_chicken {0.f, 0.f}, right_chicken {1024.f, 0.f};
+    AnimationPlayback::create(
+        &left_chicken,
         "res/chicken_walk.png",
-        1.f,
+        0.5f,
         {{0.f, 96.f}, {32.f, 96.f}, {64.f, 96.f}, {96.f, 96.f}}
-    ), walk_left = AnimationPlayback::create(
+    );
+    AnimationPlayback::create(
+        &right_chicken,
         "res/chicken_walk.png",
-        2.f,
+        0.75f,
         {{0.f, 32.f}, {32.f, 32.f}, {64.f, 32.f}, {96.f, 32.f}}
     );
 
