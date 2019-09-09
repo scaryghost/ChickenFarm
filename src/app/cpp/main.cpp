@@ -8,7 +8,9 @@
 #include "app/animation_playback.h"
 
 #include <chrono>
+#include <vector>
 
+using std::vector;
 using std::chrono::duration;
 using std::chrono::duration_cast;
 using std::chrono::high_resolution_clock;
@@ -27,19 +29,40 @@ int main(int argc, char** argv) {
     volatile bool running = true;
     auto previous = std::chrono::high_resolution_clock::now(), current = previous;
 
-    Actor left_chicken {{0.f, 0.f}, {32.f, 0.f}}, right_chicken {{1024.f, 0.f}, {-24.f, 0.f}};
-    AnimationPlayback::create(
-        &left_chicken,
-        "res/chicken_walk.png",
-        0.5f,
-        {{0.f, 96.f}, {32.f, 96.f}, {64.f, 96.f}, {96.f, 96.f}}
-    );
-    AnimationPlayback::create(
-        &right_chicken,
-        "res/chicken_walk.png",
-        0.75f,
-        {{0.f, 32.f}, {32.f, 32.f}, {64.f, 32.f}, {96.f, 32.f}}
-    );
+    AnimationPlayback::animations.resize(8);
+    vector<Actor> chickens = {
+        {{512.f, 512.f}, {0.f, 0.f}, 0.f}, 
+        {{1024.f, 512.f}, {0.f, 0.f}, 0.f}
+    };
+    for(auto& c: chickens) {
+        c.animations = {{
+            AnimationPlayback::create(
+                &c,
+                "res/chicken_walk.png",
+                0.5f,
+                {{0.f, 0.f}, {32.f, 0.f}, {64.f, 0.f}, {96.f, 0.f}}
+            ),
+            AnimationPlayback::create(
+                &c,
+                "res/chicken_walk.png",
+                0.5f,
+                {{0.f, 64.f}, {32.f, 64.f}, {64.f, 64.f}, {96.f, 64.f}}
+            ),
+            AnimationPlayback::create(
+                &c,
+                "res/chicken_walk.png",
+                0.5f,
+                {{0.f, 96.f}, {32.f, 96.f}, {64.f, 96.f}, {96.f, 96.f}}
+            ),
+            AnimationPlayback::create(
+                &c,
+                "res/chicken_walk.png",
+                0.5f,
+                {{0.f, 32.f}, {32.f, 32.f}, {64.f, 32.f}, {96.f, 32.f}}
+            )
+        }};
+        c.current_animation = nullptr;
+    }
 
 	while (running) {
         ALLEGRO_EVENT event;
@@ -58,8 +81,9 @@ int main(int argc, char** argv) {
         auto dt= duration<float>(current - previous);
         previous = current;
 
-        left_chicken.tick(dt.count());
-        right_chicken.tick(dt.count());
+        for(auto& c: chickens) {
+            c.tick(dt.count());
+        }
         AnimationPlayback::tick(dt.count());
         AnimationPlayback::draw();
 
