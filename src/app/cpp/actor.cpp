@@ -16,7 +16,7 @@ static array<Vector, 4> velocities = {{
 
 
 void Actor::tick(float dt) {
-    position.x = min(max(position.x + velocity.x * dt, 0.f), 1956.f);
+    position.x = min(max(position.x + velocity.x * dt, 0.f), 1856.f);
     position.y = min(max(position.y + velocity.y * dt, 0.f), 1016.f);
 
     duration -= dt;
