@@ -3,6 +3,7 @@
 #include "allegro5/events.h"
 #include "allegro5/system.h"
 #include "allegro5/allegro_image.h"
+#include "allegro5/timer.h"
 
 #include "app/actor.h"
 #include "app/animation_playback.h"
@@ -18,6 +19,8 @@ using std::chrono::duration_cast;
 using std::chrono::high_resolution_clock;
 using std::chrono::seconds;
 
+const float FPS = 60;
+
 int main(int argc, char** argv) {
     al_init();
     al_init_image_addon();
@@ -25,10 +28,12 @@ int main(int argc, char** argv) {
     al_set_new_display_flags(ALLEGRO_FRAMELESS | ALLEGRO_FULLSCREEN_WINDOW);
 	auto display = al_create_display(1280, 960);
     auto queue = al_create_event_queue();
+    auto timer = al_create_timer(1.0 / FPS);
 	
 	al_register_event_source(queue, al_get_display_event_source(display));
+    al_register_event_source(queue, al_get_timer_event_source(timer));
 
-    volatile bool running = true;
+    volatile bool running = true, redraw = true;
     auto previous = std::chrono::high_resolution_clock::now(), current = previous;
 
     vector<Actor> chickens = {
@@ -66,33 +71,40 @@ int main(int argc, char** argv) {
         i += 4;
     });
 
+    al_start_timer(timer);
 	while (running) {
         ALLEGRO_EVENT event;
-		if (!al_is_event_queue_empty(queue)) {
-			al_wait_for_event(queue, &event);
-            switch(event.type) {
-                case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                    running = false;
-                    break;
+        al_wait_for_event(queue, &event);
+        switch(event.type) {
+            case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                running = false;
+                break;
+            case ALLEGRO_EVENT_TIMER:
+                redraw = true;
+                break;
+        }
+
+        if(redraw && al_is_event_queue_empty(queue)) {
+            redraw = false;
+
+            current = high_resolution_clock::now();
+            auto dt= duration<float>(current - previous);
+            previous = current;
+
+            for(auto& c: chickens) {
+                c.tick(dt.count());
             }
+            AnimationPlayback::tick(dt.count());
+
+            al_clear_to_color(al_map_rgb(0x63, 0x63, 0x63));
+            AnimationPlayback::draw();
+
+            al_flip_display();
         }
-
-        al_clear_to_color(al_map_rgb(0x63, 0x63, 0x63));
-
-        current = high_resolution_clock::now();
-        auto dt= duration<float>(current - previous);
-        previous = current;
-
-        for(auto& c: chickens) {
-            c.tick(dt.count());
-        }
-        AnimationPlayback::tick(dt.count());
-        AnimationPlayback::draw();
-
-		al_flip_display();
 	}
 
     al_destroy_display(display);
+    al_destroy_timer(timer);
     al_destroy_event_queue(queue);
 
     return 0;
