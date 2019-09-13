@@ -7,18 +7,25 @@
 using namespace std;
 
 vector<Animation> AnimationPlayback::animations;
-unordered_set<Animation*> AnimationPlayback::active;
+set<size_t> AnimationPlayback::active;
 
 void AnimationPlayback::tick(float delta) {
     for(auto it: active) {
-        it->elapsed += delta;
+        animations[it].elapsed += delta;
     }
 }
 
 void AnimationPlayback::draw() {
     for(auto it: active) {
-        int i = int(it->elapsed / it->duration * 4.f) % 4;
-        al_draw_scaled_bitmap(it->bitmap, it->offsets[i].first, it->offsets[i].second, 32, 32, it->actor->position.x, it->actor->position.y, 64, 64, 0);
+        int i = int(animations[it].elapsed / animations[it].duration * 4.f) % 4;
+        al_draw_scaled_bitmap(
+            animations[it].bitmap, 
+            animations[it].offsets[i].first, animations[it].offsets[i].second, 
+            32, 32, 
+            animations[it].actor->position.x, animations[it].actor->position.y, 
+            64, 64, 
+            0
+        );
     }
 }
 
@@ -40,9 +47,11 @@ Animation* AnimationPlayback::create(
     return &animations.back();
 }
 
-void AnimationPlayback::start(Animation* animation) {
-    active.insert(animation);
+void AnimationPlayback::start(size_t idx) {
+    if (idx < no_animation) {
+        active.insert(idx);
+    }
 }
-void AnimationPlayback::stop(Animation* animation) {
-    active.erase(animation);
+void AnimationPlayback::stop(size_t idx) {
+    active.erase(idx);
 }

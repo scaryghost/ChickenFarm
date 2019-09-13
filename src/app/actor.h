@@ -1,8 +1,9 @@
 #pragma once
 
+#include <cstddef>
 #include <vector>
 
-struct Animation;
+const std::size_t no_animation = -1;
 
 struct Vector {
     float x, y;
@@ -11,8 +12,8 @@ struct Vector {
 struct Actor {
     Vector position, velocity;
     float duration;
-    std::vector<Animation*> animations;
-    Animation* current_animation;
+    std::vector<std::size_t> animations;
+    std::size_t current_animation;
 
     void tick(float dt);
 };

@@ -2,9 +2,10 @@
 
 #include "animation.h"
 
+#include <cstddef>
 #include <initializer_list>
 #include <string>
-#include <unordered_set>
+#include <set>
 #include <vector>
 
 class AnimationPlayback {
@@ -19,10 +20,10 @@ public:
         const std::initializer_list<std::pair<float, float>>& offsets
     );
 
-    static void start(Animation* animation);
-    static void stop(Animation* animation);
+    static void start(std::size_t idx);
+    static void stop(std::size_t idx);
 
     static std::vector<Animation> animations;
 private:
-    static std::unordered_set<Animation*> active;
+    static std::set<std::size_t> active;
 };

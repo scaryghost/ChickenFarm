@@ -2,6 +2,7 @@
 #include "app/animation_playback.h"
 
 #include <algorithm>
+#include <array>
 #include <random>
 
 using namespace std; 

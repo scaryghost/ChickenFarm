@@ -7,10 +7,12 @@
 #include "app/actor.h"
 #include "app/animation_playback.h"
 
+#include <algorithm>
 #include <chrono>
 #include <vector>
 
-using std::vector;
+using namespace std;
+
 using std::chrono::duration;
 using std::chrono::duration_cast;
 using std::chrono::high_resolution_clock;
@@ -29,40 +31,40 @@ int main(int argc, char** argv) {
     volatile bool running = true;
     auto previous = std::chrono::high_resolution_clock::now(), current = previous;
 
-    AnimationPlayback::animations.resize(8);
     vector<Actor> chickens = {
         {{512.f, 512.f}, {0.f, 0.f}, 0.f}, 
         {{1024.f, 512.f}, {0.f, 0.f}, 0.f}
     };
-    for(auto& c: chickens) {
-        c.animations = {{
-            AnimationPlayback::create(
-                &c,
-                "res/chicken_walk.png",
-                0.5f,
-                {{0.f, 0.f}, {32.f, 0.f}, {64.f, 0.f}, {96.f, 0.f}}
-            ),
-            AnimationPlayback::create(
-                &c,
-                "res/chicken_walk.png",
-                0.5f,
-                {{0.f, 64.f}, {32.f, 64.f}, {64.f, 64.f}, {96.f, 64.f}}
-            ),
-            AnimationPlayback::create(
-                &c,
-                "res/chicken_walk.png",
-                0.5f,
-                {{0.f, 96.f}, {32.f, 96.f}, {64.f, 96.f}, {96.f, 96.f}}
-            ),
-            AnimationPlayback::create(
-                &c,
-                "res/chicken_walk.png",
-                0.5f,
-                {{0.f, 32.f}, {32.f, 32.f}, {64.f, 32.f}, {96.f, 32.f}}
-            )
-        }};
-        c.current_animation = nullptr;
-    }
+    for_each(chickens.begin(), chickens.end(), [i = static_cast<size_t>(0)](auto& c) mutable {
+        AnimationPlayback::create(
+            &c,
+            "res/chicken_walk.png",
+            0.5f,
+            {{0.f, 0.f}, {32.f, 0.f}, {64.f, 0.f}, {96.f, 0.f}}
+        );
+        AnimationPlayback::create(
+            &c,
+            "res/chicken_walk.png",
+            0.5f,
+            {{0.f, 64.f}, {32.f, 64.f}, {64.f, 64.f}, {96.f, 64.f}}
+        );
+        AnimationPlayback::create(
+            &c,
+            "res/chicken_walk.png",
+            0.5f,
+            {{0.f, 96.f}, {32.f, 96.f}, {64.f, 96.f}, {96.f, 96.f}}
+        );
+        AnimationPlayback::create(
+            &c,
+            "res/chicken_walk.png",
+            0.5f,
+            {{0.f, 32.f}, {32.f, 32.f}, {64.f, 32.f}, {96.f, 32.f}}
+        );
+
+        c.animations = {i, i + 1, i + 2, i + 3};
+        c.current_animation = no_animation;
+        i += 4;
+    });
 
 	while (running) {
         ALLEGRO_EVENT event;
