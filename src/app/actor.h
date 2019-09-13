@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <cstddef>
 #include <vector>
 
@@ -10,10 +11,10 @@ struct Vector {
 };
 
 struct Actor {
+    static const std::array<Vector, 4> velocities;
+
     Vector position, velocity;
     float duration;
     std::vector<std::size_t> animations;
     std::size_t current_animation;
-
-    void tick(float dt);
 };

@@ -7,6 +7,7 @@
 
 #include "app/actor.h"
 #include "app/animation_playback.h"
+#include "app/random_controller.h"
 
 #include <algorithm>
 #include <chrono>
@@ -69,6 +70,8 @@ int main(int argc, char** argv) {
         c.animations = {i, i + 1, i + 2, i + 3};
         c.current_animation = no_animation;
         i += 4;
+
+        RandomController::actors.insert(&c);
     });
 
     al_start_timer(timer);
@@ -91,9 +94,7 @@ int main(int argc, char** argv) {
             auto dt= duration<float>(current - previous);
             previous = current;
 
-            for(auto& c: chickens) {
-                c.tick(dt.count());
-            }
+            RandomController::tick(dt.count());
             AnimationPlayback::tick(dt.count());
 
             al_clear_to_color(al_map_rgb(0x63, 0x63, 0x63));
